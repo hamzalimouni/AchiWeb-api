@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -10,6 +11,7 @@ const studentSkillRoute = require("./routes/students_skills");
 const projectSkillRoute = require("./routes/project_skills");
 const enrollementRoute = require("./routes/enrollements");
 
+app.use(cors());
 app.use(express.json());
 dotenv.config();
 const PORT = process.env.PORT || 5000;

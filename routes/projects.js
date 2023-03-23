@@ -52,7 +52,7 @@ router.put("/:id", verifyTokenAndOwnerOnRUD, async (req, res) => {
             req.params.id,
             { $set: req.body },
             { new: true });
-        res.status(201).json(updatedProject);
+        res.status(201).json("Project has been updated with successfull");
     } catch (error) {
         res.status(500).json(error);
     }

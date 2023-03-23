@@ -4,6 +4,15 @@ const { verifyTokenAndAdmin, verifyToken, verifyTokenAndAuthorization, verifyTok
 const router = require("express").Router();
 
 
+router.get("/", verifyTokenAndAdmin, async (req, res) => {
+    try {
+        const enrollements = await Enrollement.find();
+        res.status(200).json(enrollements);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
 // Create Project's Skill
 router.post("/", verifyToken, async (req, res) => {
     const newEnrollement = new Enrollement(req.body);
