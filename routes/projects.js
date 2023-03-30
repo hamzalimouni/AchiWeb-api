@@ -14,15 +14,15 @@ router.get("/find/:id", verifyToken, async (req, res) => {
 
 // Get All Projects
 router.get("/", verifyToken, async (req, res) => {
-    const query = req.query.competence;
-    try {
-        const projects = query
-            ? await Project.find({ competence: { $in: [query], }, })
-            : await Project.find();
-        res.status(200).json(projects);
-    } catch (error) {
-        res.status(500).json(error);
-    }
+    Project.find({})
+        .populate('ownerId', 'firstname lastname')
+        .then((projects) => {
+            return res.send(projects);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send("An error occurred while retrieving projects with owner name");
+        });
 });
 
 // Create Project

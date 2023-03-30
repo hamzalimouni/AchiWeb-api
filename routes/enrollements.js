@@ -7,12 +7,22 @@ const router = require("express").Router();
 
 
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
-    try {
-        const enrollements = await Enrollement.find();
-        res.status(200).json(enrollements);
-    } catch (error) {
-        res.status(500).json(error);
-    }
+    Enrollement.find({})
+        .populate({
+            path: "projectId",
+            select: "title"
+        })
+        .populate({
+            path: "studentId",
+            select: "firstname lastname"
+        })
+        .then((enrollements) => {
+            res.json(enrollements);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send("An error occurred while retrieving enrollements");
+        });
 });
 
 router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
