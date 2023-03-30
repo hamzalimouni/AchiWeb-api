@@ -46,7 +46,7 @@ router.post("/", verifyTokenAndOwner, async (req, res) => {
 });
 
 // Update 
-router.put("/:id", verifyTokenAndOwnerOnRUD, async (req, res) => {
+router.put("/:id", verifyTokenAndOwner, async (req, res) => {
     try {
         const updatedProject = await Project.findByIdAndUpdate(
             req.params.id,
@@ -59,7 +59,7 @@ router.put("/:id", verifyTokenAndOwnerOnRUD, async (req, res) => {
 })
 
 // Delete 
-router.delete("/:id", verifyTokenAndOwnerOnRUD, async (req, res) => {
+router.delete("/:id", verifyTokenAndOwner, async (req, res) => {
     try {
         await Project.findByIdAndDelete(req.params.id);
         res.status(200).json("Project has been deleted with successfull");
@@ -67,5 +67,18 @@ router.delete("/:id", verifyTokenAndOwnerOnRUD, async (req, res) => {
         res.status(500).json(error);
     }
 });
+
+router.get('/owner/:ownerId', async (req, res) => {
+    const ownerId = req.params.ownerId;
+    try {
+        const projects = await Project.find({ ownerId: ownerId }).exec();
+        res.json(projects);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const Enrollement = require("../models/Enrollement");
+const Project = require("../models/Project");
+const User = require("../models/User");
 const { verifyTokenAndAdmin, verifyToken, verifyTokenAndAuthorization, verifyTokenAndOwner, verifyTokenAndOwnerOnRUD } = require("./verifyToken");
 
 const router = require("express").Router();
@@ -22,14 +24,39 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
     }
 });
 
+router.get("/projects/:id", verifyTokenAndAuthorization, (req, res) => {
+    const studentId = req.params.id;
+    Enrollement.find({ studentId: studentId })
+        .populate("projectId")
+        .then(enrollments => {
+            // const studentProjects = enrollments.map(enrollment => enrollment.projectId);
+            return res.status(200).json(enrollments);
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send("An error occurred while retrieving the student's projects");
+        });
+});
+
 // Create Project's Skill
-router.post("/", verifyToken, async (req, res) => {
-    const newEnrollement = new Enrollement(req.body);
+router.post('/', verifyToken, async (req, res) => {
     try {
-        const savedEnrollement = await newEnrollement.save();
-        res.status(200).json(savedEnrollement);
-    } catch (error) {
-        res.status(500).json(error);
+        const { projectId, studentId, result } = req.body;
+
+        const project = await Project.findById(projectId);
+        const student = await User.findById(studentId);
+
+        const enrollment = new Enrollement({
+            projectId: project._id,
+            studentId: student._id,
+            result: result
+        });
+        await enrollment.save();
+
+        res.status(201).json(enrollment);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error creating enrollment' });
     }
 });
 

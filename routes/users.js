@@ -44,7 +44,7 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
 });
 
 // Get User
-router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
+router.get("/find/:id", verifyTokenAndAuthorization, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         const { password, ...others } = user._doc;
